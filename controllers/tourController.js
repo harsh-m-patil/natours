@@ -1,7 +1,6 @@
 const fs = require("fs");
 
 const tours = JSON.parse(
-  // eslint-disable-next-line no-undef
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
 );
 
@@ -57,15 +56,14 @@ exports.getTour = (req, res) => {
 exports.createTour = (req, res) => {
   //console.log(req.body);
   const newId = tours[tours.length - 1].id + 1;
-  const newTour = Object.assign({ id: newId }, req.body);
+  // eslint-disable-next-line node/no-unsupported-features/es-syntax
+  const newTour = { id: newId, ...req.body };
 
   //console.log(newTour);
   tours.push(newTour);
   fs.writeFile(
-    // eslint-disable-next-line no-undef
     `${__dirname}/dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
-    // eslint-disable-next-line no-unused-vars
     (err) => {
       res.status(201).json({
         status: "sucess",
