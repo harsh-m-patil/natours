@@ -11,20 +11,8 @@ app.use(morgan("dev"));
 //using middleware to get access to body
 app.use(express.json()); // get request params
 
-//app.use((req, res, next) => {
-//  console.log("Hello from middleware");
-//  next();
-//});
-//
-//app.use((req, res, next) => {
-//  req.requestTime = new Date().toISOString();
-//  next();
-//});
-
-//app.get("/", (req, res) => {
-//  res.status(200).json({ message: "Hello from the server", app: "natour" });
-//});
-
+// eslint-disable-next-line no-undef
+app.use(express.static(`${__dirname}/public`));
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
