@@ -1,24 +1,43 @@
+/* eslint-disable no-unused-vars */
 const fs = require("fs");
 const express = require("express");
+const morgan = require("morgan");
 
 const app = express();
 
 const port = 3000;
 
+// (1) Middlerware
+app.use(morgan("dev"));
+
 //using middleware to get access to body
-app.use(express.json());
+app.use(express.json()); // get request params
+
+//app.use((req, res, next) => {
+//  console.log("Hello from middleware");
+//  next();
+//});
+//
+//app.use((req, res, next) => {
+//  req.requestTime = new Date().toISOString();
+//  next();
+//});
 
 //app.get("/", (req, res) => {
 //  res.status(200).json({ message: "Hello from the server", app: "natour" });
 //});
 
 const tours = JSON.parse(
+  // eslint-disable-next-line no-undef
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
 );
 
+// (2) ROUTES HANDLERS
 const getAllTours = (req, res) => {
+  //console.log(req.requestTime);
   res.status(200).json({
     status: "success",
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours,
@@ -57,6 +76,7 @@ const createTour = (req, res) => {
   //console.log(newTour);
   tours.push(newTour);
   fs.writeFile(
+    // eslint-disable-next-line no-undef
     `${__dirname}/dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
     (err) => {
@@ -100,6 +120,39 @@ const deleteTour = (req, res) => {
     data: null,
   });
 };
+
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
+
+// (3) ROUTES
 // :variable can have multiple variables
 // :variable? this var will be opitional
 //app.get("/api/v1/tours", getAllTours);
@@ -108,13 +161,18 @@ const deleteTour = (req, res) => {
 //app.patch("/api/v1/tours/:id", updateTour);
 //app.delete("/api/v1/tours/:id", deleteTour);
 
-app.route("/api/v1/tours/").get(getAllTours).put(createTour);
-app
-  .route("/api/v1/tours/:id")
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+const tourRouter = express.Router();
+const userRouter = express.Router();
+tourRouter.route("/").get(getAllTours).post(createTour);
+tourRouter.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 
+userRouter.route("/api/v1/users").get(getAllUsers).post(createUser);
+
+userRouter.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
+
+app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/users", userRouter);
+// (4) SERVER
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
 });
