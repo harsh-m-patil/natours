@@ -6,7 +6,10 @@ const userRouter = require("./routes/userRoutes");
 const app = express();
 
 // (1) Middlerware
-app.use(morgan("dev"));
+// eslint-disable-next-line no-undef
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 //using middleware to get access to body
 app.use(express.json()); // get request params
