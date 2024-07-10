@@ -8,6 +8,10 @@ const tourController = require("../controllers/tourController");
 router
   .route("/top-5-cheap")
   .get(tourController.aliasTopTours, tourController.getAllTours);
+
+router.route("/stats").get(tourController.getTourStats);
+router.route("/monthly-plan/:year").get(tourController.getMontlyPlan);
+
 router
   .route("/")
   .get(tourController.getAllTours)
