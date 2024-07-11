@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -7,6 +8,9 @@ const tourSchema = new mongoose.Schema(
       required: [true, "A tour must have a name"], // arr[1] error message
       unique: true,
       trim: true, // removes whitespace in beginning and end
+    },
+    slug: {
+      type: String,
     },
     duration: {
       type: Number,
@@ -18,7 +22,7 @@ const tourSchema = new mongoose.Schema(
     },
     difficulty: {
       type: String,
-      required: [true, "A tour must have a group difficulty"],
+      required: [true, "A tour must have a difficulty"],
     },
     ratingsAverage: {
       type: Number,
@@ -55,6 +59,10 @@ const tourSchema = new mongoose.Schema(
       select: false, // hide from the output
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -68,5 +76,32 @@ tourSchema.virtual("durationWeek").get(function () {
   return this.duration / 7;
 });
 
+//document midleware that runs before a actual action
+// runs before .save() and .create() not on .insertMany()
+tourSchema.pre("save", function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// runs after save
+//tourSchema.post("save", (doc, next) => {
+//  console.log(doc);
+//  next();
+//});
+
+// QUERY MIDDLEWARE
+
+//tourSchema.pre("find", function (next) {
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+//tourSchema.post(/^find/, (docs, next) => {
+//  console.log(docs);
+//  next();
+//});
+
 const Tour = mongoose.model("Tour", tourSchema);
+
 module.exports = Tour;
