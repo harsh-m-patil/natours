@@ -78,6 +78,7 @@ tourSchema.virtual("durationWeek").get(function () {
 
 //document midleware that runs before a actual action
 // runs before .save() and .create() not on .insertMany()
+// This points to document
 tourSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
@@ -90,7 +91,7 @@ tourSchema.pre("save", function (next) {
 //});
 
 // QUERY MIDDLEWARE
-
+// This points to query
 //tourSchema.pre("find", function (next) {
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
@@ -101,6 +102,13 @@ tourSchema.pre(/^find/, function (next) {
 //  console.log(docs);
 //  next();
 //});
+
+// Aggreate MIDDLEWARE
+// This points to aggregation object
+tourSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  next();
+});
 
 const Tour = mongoose.model("Tour", tourSchema);
 
