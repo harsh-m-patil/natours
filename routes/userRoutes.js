@@ -1,5 +1,6 @@
 const express = require("express");
 const userController = require("../controllers/userController");
+const authController = require("../controllers/authController");
 // (3) ROUTES
 // :variable can have multiple variables
 // :variable? this var will be opitional
@@ -10,6 +11,8 @@ const userController = require("../controllers/userController");
 //app.delete("/api/v1/tours/:id", deleteTour);
 
 const router = express.Router();
+
+router.post("/signup", authController.signup);
 
 router
   .route("/api/v1/users")
