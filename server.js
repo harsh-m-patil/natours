@@ -1,9 +1,15 @@
 /* eslint-disable no-console */
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const app = require("./app");
 
-dotenv.config({ path: "./config.env" }); // should be before app
+process.on("uncaughtException", (err) => {
+  console.log("uncaughtException");
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
+dotenv.config(); // should be before app
+const app = require("./app");
 
 mongoose.connect(process.env.DB_URI, {}).then(() => {
   console.log("Database connected");
