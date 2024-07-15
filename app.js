@@ -18,6 +18,10 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.json()); // get request params
 app.use(express.static(`${__dirname}/public`));
 
+app.use((req, res, next) => {
+  req.responseTime = new Date().toISOString();
+  next();
+});
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
