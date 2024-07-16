@@ -28,6 +28,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       user: {
         name: newUser.name,
         email: newUser.email,
+        role: newUser.role,
       },
     },
   });
@@ -89,3 +90,16 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+exports.restrictTo =
+  (...roles) =>
+  (req, res, next) => {
+    console.log(req.user);
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403),
+      );
+    }
+
+    next();
+  };
