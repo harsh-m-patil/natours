@@ -31,6 +31,15 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) create error if user post password data
   if (req.body.password || req.body.password) {
