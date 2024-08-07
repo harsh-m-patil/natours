@@ -10,7 +10,7 @@ mongoose.connect(DB_URI, {}).then(() => {
   console.log("DB Connected");
 });
 
-const tours = JSON.parse(fs.readFileSync("./tours-simple.json", "utf-8"));
+const tours = JSON.parse(fs.readFileSync("./tours.json", "utf-8"));
 
 // Import DATA into DB
 const importData = async () => {
