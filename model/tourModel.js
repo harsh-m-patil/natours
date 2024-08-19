@@ -119,6 +119,13 @@ tourSchema.virtual("durationWeek").get(function () {
   return this.duration / 7;
 });
 
+// Virtual Populate
+tourSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
+
 //document midleware that runs before a actual action
 // runs before .save() and .create() not on .insertMany()
 // This points to document
