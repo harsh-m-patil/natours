@@ -22,3 +22,36 @@ exports.deleteOne = (Model) =>
       data: null,
     });
   });
+
+exports.updateOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const updatedDoc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true, // return the updated document
+      runValidators: true,
+    });
+
+    const modelName = Model.modelName.toLowerCase();
+    if (!updatedDoc) {
+      next(new AppError(`No ${modelName} find with that id`, 404));
+      return;
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        [modelName]: updatedDoc,
+      },
+    });
+  });
+
+exports.createOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const newDoc = await Model.create(req.body);
+    const modelName = Model.modelName.toLowerCase();
+    res.status(200).json({
+      status: "success",
+      data: {
+        [modelName]: newDoc,
+      },
+    });
+  });
