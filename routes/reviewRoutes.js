@@ -2,6 +2,7 @@ const express = require("express");
 const reviewController = require("../controllers/reviewController");
 const authController = require("../controllers/authController");
 
+// NOTE: access params of prev router
 const router = express.Router({ mergeParams: true });
 
 router
@@ -16,6 +17,7 @@ router
 
 router
   .route("/:id")
+  .get(reviewController.getReview)
   .delete(reviewController.deleteReview)
   .patch(reviewController.updateReview);
 

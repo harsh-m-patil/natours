@@ -14,6 +14,7 @@ const router = express.Router();
 //    reviewController.createReview,
 //  );
 
+//NOTE: nested routes
 router.use("/:tourId/reviews", reviewRouter);
 
 router

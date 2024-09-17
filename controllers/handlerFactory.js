@@ -1,3 +1,4 @@
+const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -52,6 +53,48 @@ exports.createOne = (Model) =>
       status: "success",
       data: {
         [modelName]: newDoc,
+      },
+    });
+  });
+
+exports.getOne = (Model, populateOptions) =>
+  catchAsync(async (req, res, next) => {
+    let query = Model.findById(req.params.id);
+    if (populateOptions) query = query.populate(populateOptions);
+
+    const doc = await query;
+
+    const modelName = Model.modelName.toLowerCase();
+    if (!doc) {
+      next(new AppError(`No ${modelName} find with that id`, 404));
+      return;
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        [modelName]: doc,
+      },
+    });
+  });
+
+exports.getAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    // Execute Query
+    const features = new APIFeatures(Model.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const docs = await features.query;
+    const modelName = Model.modelName.toLowerCase();
+
+    res.status(200).json({
+      status: "success",
+      results: docs.length,
+      data: {
+        [modelName]: docs,
       },
     });
   });

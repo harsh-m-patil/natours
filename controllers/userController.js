@@ -1,6 +1,4 @@
-// TODO:
 const catchAsync = require("../utils/catchAsync");
-const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const User = require("../model/userModel");
 const factory = require("./handlerFactory");
@@ -14,23 +12,7 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const features = new APIFeatures(User.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  const users = await features.query;
-
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: {
-      users: users,
-    },
-  });
-});
+exports.getAllUsers = factory.getAll(User);
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
@@ -67,27 +49,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
-
-  if (!user) {
-    return next(new AppError("No user find with that id", 404));
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      user: user,
-    },
-  });
-});
+exports.getUser = factory.getOne(User);
 
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: "error",
-    message: "This route is not yet defined",
+    message: "This route is not yet defined! Please use /signup instead",
   });
 };
+
 exports.deleteUser = (req, res) => {
   res.status(500).json({
     status: "error",
