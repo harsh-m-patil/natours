@@ -113,6 +113,12 @@ const tourSchema = new mongoose.Schema(
   },
 );
 
+//NOTE: indexing 1 ascending,-1 descending
+//SET according to keys that are qeuried frequently
+//tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 // cant use in a query
 tourSchema.virtual("durationWeek").get(function () {
   // ()=> does not have this keyword
