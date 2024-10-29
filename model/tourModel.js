@@ -120,6 +120,8 @@ const tourSchema = new mongoose.Schema(
 //tourSchema.index({ price: 1 });
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+// real points on earth-like sphere
+tourSchema.index({ startLocation: "2dsphere" });
 
 // cant use in a query
 tourSchema.virtual("durationWeek").get(function () {

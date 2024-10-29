@@ -1,4 +1,5 @@
 const Tour = require("../model/tourModel");
+const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./handlerFactory");
 
@@ -91,6 +92,48 @@ exports.getMontlyPlan = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       plan,
+    },
+  });
+});
+
+// /tours-within/:distance/center/:latlng/unit/:unit
+// /tours-within/233/center/-40,45/unit/km
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(",");
+
+  let radius;
+
+  // convert to radian
+  if (unit === "mi") {
+    radius = distance / 3963.2;
+  } else if (unit === "km") {
+    radius = distance / 6378.1;
+  } else {
+    return next(new AppError("Unsupported unit.Please use km or mi(miles)"));
+  }
+
+  if (!lat || !lng) {
+    return next(
+      new AppError(
+        "Please provide latitude and longitude in format lat,lng",
+        400,
+      ),
+    );
+  }
+
+  // NOTE: GeoSpatial query search with a circle with radius radius having center
+  // at lat,lng
+  // need to add index to the geo field to use this
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({
+    status: "success",
+    results: tours.length,
+    data: {
+      tours,
     },
   });
 });
