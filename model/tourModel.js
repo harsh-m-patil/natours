@@ -178,10 +178,10 @@ tourSchema.pre(/^find/, function (next) {
 
 // Aggreate MIDDLEWARE
 // This points to aggregation object
-tourSchema.pre("aggregate", function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+//tourSchema.pre("aggregate", function (next) {
+//  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//  next();
+//});
 
 const Tour = mongoose.model("Tour", tourSchema);
 
